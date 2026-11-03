@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO tasks (title) VALUES
+    ('Configurar Docker'),
+    ('Conectar API con PostgreSQL');

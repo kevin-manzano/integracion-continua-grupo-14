@@ -1,0 +1,61 @@
+# Define los dos contenedores del proyecto (db y api) y cómo se comunican entre sí.
+services:
+  # Contenedor 1: base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: db
+    restart: unless-stopped
+    # Credenciales y nombre de la DB, tomados del archivo .env (nunca hardcodeados)
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      # Persiste los datos de la DB aunque se recree el contenedor
+      - db_data:/var/lib/postgresql/data
+      # Scripts SQL que se ejecutan automáticamente la primera vez que se crea la DB
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      # Expone el puerto al host solo para poder inspeccionar la DB manualmente (ej. con un cliente SQL)
+      - "${DB_PORT}:5432"
+    # Permite que Docker sepa cuándo Postgres ya está listo para aceptar conexiones
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Contenedor 2: API backend en Node.js + Express
+  api:
+    build: ./api
+    container_name: api
+    restart: unless-stopped
+    # Variables que la API usa para conectarse a la DB.
+    # DB_HOST=db apunta al nombre del servicio, no a "localhost": así es como
+    # un contenedor encuentra a otro dentro de la red interna de Docker.
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      PORT: ${API_PORT}
+    ports:
+      - "${API_PORT}:3000"
+    # Espera a que la DB esté healthy antes de iniciar la API, para evitar errores de conexión al arrancar
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+# Red interna compartida: permite que "api" y "db" se vean entre sí por nombre de servicio
+networks:
+  app-network:
+    driver: bridge
+
+# Volumen con el que Postgres guarda sus datos fuera del ciclo de vida del contenedor
+volumes:
+  db_data:
