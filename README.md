@@ -1,6 +1,6 @@
 # Integración Continua - Grupo 14
 
-Proyecto académico que demuestra la comunicación entre dos contenedores Docker:
+Proyecto que usa dos contenedores Docker los cuales se comunican entre si:
 
 - **api**: servicio backend en Node.js + Express
 - **db**: base de datos PostgreSQL
