@@ -91,9 +91,7 @@ EOF
       steps {
         sh '''
           postman collection run "postman/collections/Tasks API" \
-            -e "postman/environments/CI.environment.yaml" \
-            --reporter cli \
-            --output reports/postman
+            -e "postman/environments/CI.environment.yaml"
         '''
       }
     }
@@ -102,7 +100,6 @@ EOF
   post {
     always {
       sh 'docker compose --env-file .env.ci down -v || true'
-      archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
       sh 'rm -f .env.ci'
     }
   }
