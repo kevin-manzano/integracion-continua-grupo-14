@@ -7,7 +7,7 @@ pipeline {
   }
 
   environment {
-    PATH = "${env.HOME}/.postman/bin:${env.PATH}"
+    PATH = "${env.HOME}/.local/bin:${env.PATH}"
   }
 
   stages {
