@@ -6,6 +6,10 @@ pipeline {
     timeout(time: 20, unit: 'MINUTES')
   }
 
+  environment {
+    PATH = "${env.HOME}/.postman/bin:${env.PATH}"
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -25,7 +29,7 @@ pipeline {
 
           if ! command -v postman >/dev/null 2>&1; then
             echo "Postman CLI not found, installing..."
-            curl -fsSL https://postman.com/downloads/cli/install.sh | sh
+            curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
           fi
           postman --version
         '''
