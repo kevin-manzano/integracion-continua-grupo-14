@@ -73,7 +73,7 @@ EOF
       steps {
         sh '''
           for i in $(seq 1 30); do
-            if curl -fs http://localhost:3000/health; then
+            if curl -fs http://host.docker.internal:3000/health; then
               echo "API healthy"
               exit 0
             fi
