@@ -1,0 +1,7 @@
+name: CI
+values:
+  - key: baseUrl
+    value: 'http://localhost:3000'
+    enabled: true
+    type: default
+    description: Base URL of the API container as exposed to the Jenkins agent

@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'POST /tasks'
+method: POST
+url: '{{baseUrl}}/tasks'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "CI smoke-test task"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201));
+      pm.test('created row has id and title', () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('id');
+        pm.expect(json.title).to.eql('CI smoke-test task');
+      });
