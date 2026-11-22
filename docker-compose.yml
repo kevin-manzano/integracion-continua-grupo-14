@@ -2,7 +2,8 @@
 services:
   # Contenedor 1: base de datos PostgreSQL
   db:
-    image: postgres:16-alpine
+    # Imagen postgres:16-alpine con los scripts de db/init incluidos (ver db/Dockerfile)
+    build: ./db
     container_name: db
     restart: unless-stopped
     # Credenciales y nombre de la DB, tomados del archivo .env (nunca hardcodeados)
@@ -13,8 +14,6 @@ services:
     volumes:
       # Persiste los datos de la DB aunque se recree el contenedor
       - db_data:/var/lib/postgresql/data
-      # Scripts SQL que se ejecutan automáticamente la primera vez que se crea la DB
-      - ./db/init:/docker-entrypoint-initdb.d
     ports:
       # Expone el puerto al host solo para poder inspeccionar la DB manualmente (ej. con un cliente SQL)
       - "${DB_PORT}:5432"

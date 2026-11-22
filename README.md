@@ -20,6 +20,7 @@ Ambos contenedores se comunican a través de una red interna de Docker definida 
 │   ├── Dockerfile
 │   └── package.json
 ├── db/
+│   ├── Dockerfile      # Imagen de PostgreSQL con los scripts de init incluidos
 │   └── init/           # Scripts SQL que inicializan el esquema y datos de prueba
 ├── docker-compose.yml
 ├── .env.example        # Plantilla de variables de entorno
